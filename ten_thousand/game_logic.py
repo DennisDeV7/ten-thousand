@@ -1,4 +1,5 @@
 from random import randint
+from collections import Counter
 
 
 class GameLogic:
@@ -7,53 +8,114 @@ class GameLogic:
 
     @staticmethod
     def calculate_score(dice_roll):
-        score_board = [
-            (tuple(), 0),
-            ((1,), 100),
-            ((1, 1), 200),
-            ((1, 1, 1), 1000),
-            ((1, 1, 1, 1), 2000),
-            ((1, 1, 1, 1, 1), 3000),
-            ((1, 1, 1, 1, 1, 1), 4000),
-            ((2,), 0),
-            ((2, 2), 0),
-            ((2, 2, 2), 200),
-            ((2, 2, 2, 2), 400),
-            ((2, 2, 2, 2, 2), 600),
-            ((2, 2, 2, 2, 2, 2), 800),
-            ((3,), 0),
-            ((3, 3), 0),
-            ((3, 3, 3), 300),
-            ((3, 3, 3, 3), 600),
-            ((3, 3, 3, 3, 3), 900),
-            ((3, 3, 3, 3, 3, 3), 1200),
-            ((4,), 0),
-            ((4, 4), 0),
-            ((4, 4, 4), 400),
-            ((4, 4, 4, 4), 800),
-            ((4, 4, 4, 4, 4), 1200),
-            ((4, 4, 4, 4, 4, 4), 1600),
-            ((5,), 50),
-            ((5, 5), 100),
-            ((5, 5, 5), 500),
-            ((5, 5, 5, 5), 1000),
-            ((5, 5, 5, 5, 5), 1500),
-            ((5, 5, 5, 5, 5, 5), 2000),
-            ((6,), 0),
-            ((6, 6), 0),
-            ((6, 6, 6), 600),
-            ((6, 6, 6, 6), 1200),
-            ((6, 6, 6, 6, 6), 1800),
-            ((6, 6, 6, 6, 6, 6), 2400),
-            ((1, 2, 3, 4, 5, 6), 1500),
-            ((2, 2, 3, 3, 4, 6), 0),
-            ((2, 2, 3, 3, 6, 6), 1500),
-            ((1, 1, 1, 2, 2, 2), 1200),
-        ]
+        score = 0
+        roll = Counter(dice_roll).most_common()
 
-        for x in score_board:
-            if x[0] == dice_roll:
-                return x[1]
+        if len(dice_roll) == 0:
+            return score
+
+        print(f"Roll: {roll}")
+
+        # straight
+        if len(roll) == 6:
+            return 1500
+
+        # 3 pairs
+        if len(roll) > 2:
+            if roll[0][1] == 2 and roll[1][1] == 2 and roll[2][1] == 2:
+                score += 1500
+                return score
+
+        # 2 sets of 3
+        if len(roll) == 2:
+            if roll[0][1] == 3 and roll[1][1] == 3:
+                score += 1200
+                return score
+
+        for num in roll:
+            # Score cases for 1
+            if num[0] == 1:
+                if num[1] == 1:
+                    score += 100
+                if num[1] == 2:
+                    score += 200
+                if num[1] == 3:
+                    score += 1000
+                if num[1] == 4:
+                    score += 2000
+                if num[1] == 5:
+                    score += 3000
+                if num[1] == 6:
+                    score += 4000
+
+            # Score cases for 2
+            if num[0] == 2:
+                if num[1] < 3:
+                    score += 0
+                if num[1] == 3:
+                    score += 200
+                if num[1] == 4:
+                    score += 400
+                if num[1] == 5:
+                    score += 600
+                if num[1] == 6:
+                    score += 800
+
+            # Score cases for 3
+            if num[0] == 3:
+                if num[1] < 3:
+                    score += 0
+                if num[1] == 3:
+                    score += 300
+                if num[1] == 4:
+                    score += 600
+                if num[1] == 5:
+                    score += 900
+                if num[1] == 6:
+                    score += 1200
+
+            # Score cases for 4
+            if num[0] == 4:
+                if num[1] < 3:
+                    score += 0
+                if num[1] == 3:
+                    score += 400
+                if num[1] == 4:
+                    score += 800
+                if num[1] == 5:
+                    score += 1200
+                if num[1] == 6:
+                    score += 1600
+
+            # Score cases for 5
+            if num[0] == 5:
+                if num[1] == 1:
+                    score += 50
+                if num[1] == 2:
+                    score += 100
+                if num[1] == 3:
+                    score += 500
+                if num[1] == 4:
+                    score += 1000
+                if num[1] == 5:
+                    score += 1500
+                if num[1] == 6:
+                    score += 2000
+
+            # Score cases for 6
+            if num[0] == 6:
+                if num[1] < 3:
+                    score += 0
+                if num[1] == 3:
+                    score += 600
+                if num[1] == 4:
+                    score += 1200
+                if num[1] == 5:
+                    score += 1800
+                if num[1] == 6:
+                    score += 2400
+
+        return score
 
     @staticmethod
     def roll_dice(num_dice):
@@ -65,7 +127,9 @@ class GameLogic:
 
 
 if __name__ == "__main__":
-    test = GameLogic.calculate_score((1, 2, 3, 4, 5, 6))
-    print(test)
-    test2 = GameLogic.roll_dice(2)
+
+    test2 = GameLogic.roll_dice(6)
     print(test2)
+
+    test = GameLogic.calculate_score(test2)
+    print(test)
