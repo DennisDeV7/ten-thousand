@@ -14,7 +14,7 @@ class GameLogic:
         if len(dice_roll) == 0:
             return score
 
-        print(f"Roll: {roll}")
+        # print(f"Roll: {roll}")
 
         # straight
         if len(roll) == 6:
@@ -125,11 +125,62 @@ class GameLogic:
             results.append(roll)
         return tuple(results)
 
+    def play_dice(self):
+        print("Welcome to Ten Thousand")
+        while True:
+            score_points = 0
+            print("(y)es to play or (n)o to decline")
+            choice = input("> ")
+            round_num = 1
+            if choice == "n":
+                print("OK. Maybe another time")
+                break
+            elif choice == "y":
+                while True:
+                    print(f"Starting round {round_num}")
+                    num_di = 6
+                    roll_values = []
+                    roll = GameLogic.roll_dice(num_di)
+                    roll_length = len(roll)
+                    print(f"Rolling {roll_length} dice...")
+                    for value in roll:
+                        roll_values.append(str(value))
+
+                    formatted_roll = " ".join(roll_values)
+                    print(f"*** {formatted_roll} ***")
+
+                    print("Enter dice to keep, or (q)uit:")
+                    choice = input("> ")
+
+                    if choice == "q":
+                        print(f"Thanks for playing. You earned {score_points} points")
+                        break
+                    else:
+                        points_potential = [int(d) for d in str(choice)]
+                        # points_potential.append(int(choice))
+                        for point in points_potential:
+                            num_di -= 1
+                        points = GameLogic.calculate_score(tuple(points_potential))
+                        print(f"You have {points} unbanked points and {num_di} dice remaining")
+                        while True:
+
+                            print("(r)oll again, (b)ank your points or (q)uit:")
+                            choice = input("> ")
+                            if choice == "b":
+                                score_points += points
+                                print(f"You banked {points} in round {round_num}")
+                                print(f"Total score is {score_points} points")
+                                round_num += 1
+                                break
+                            elif choice == "q":
+                                break
+                            break
+
+                break
+
 
 if __name__ == "__main__":
 
     test2 = GameLogic.roll_dice(6)
-    print(test2)
 
-    test = GameLogic.calculate_score(test2)
-    print(test)
+    test3 = GameLogic.play_dice(test2)
