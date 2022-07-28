@@ -1,4 +1,4 @@
-# LAB - Class 06, 07
+# LAB - Class 06, 07, 08
 
 ## Project: Ten-Thousand
 
@@ -14,7 +14,17 @@ In an active virtual environment: `python ten_thousand/game_logic.py`
 
 For test_calculate_score.py: `pytest-watch -c -- -k test_calculate_score.py`\
 For test_roll_dice.py: `pytest-watch -c -- -k test_roll_dice.py `\
+For test_get_scorer.py: `pytest-watch -c -- -k test_get_scorer.py`\
+For test_validate_keepers.py: `pytest-watch -c -- -k test_validate_keepers`\
 For all tests: `pytest-watch -c`
+
+Ten Thousand now passes the following tests:
+- All of Version 1
+- All of Version 2
+- From Version 3:
+  - test_get_scorers.py
+  - test_validate_score.py
+  - cheat_and_fix.sim.txt
 
 Example run of game_logic.py
 ```
