@@ -142,7 +142,8 @@ class GameLogic:
     @staticmethod
     def get_scorers(tup):
         scorers = ()
-        losers = ()
+        staging_losers = []
+
         index = 0
         for num in tup:
             index += 1
@@ -157,7 +158,7 @@ class GameLogic:
             if GameLogic.calculate_score(one) > 0:
                 scorers += one
             else:
-                losers += one
+                staging_losers.append(tup[0])
 
         # Check second value from input
         if index >= 2:
@@ -165,7 +166,7 @@ class GameLogic:
             if GameLogic.calculate_score(two) > 0:
                 scorers += two
             else:
-                losers += two
+                staging_losers.append(tup[1])
         else:
             return scorers
 
@@ -175,7 +176,7 @@ class GameLogic:
             if GameLogic.calculate_score(three) > 0:
                 scorers += three
             else:
-                losers += three
+                staging_losers.append(tup[2])
 
         # Check fourth value from input
         if index >= 4:
@@ -183,7 +184,7 @@ class GameLogic:
             if GameLogic.calculate_score(four) > 0:
                 scorers += four
             else:
-                losers += four
+                staging_losers.append(tup[3])
 
         # Check fifth value from input
         if index >= 5:
@@ -191,7 +192,7 @@ class GameLogic:
             if GameLogic.calculate_score(five) > 0:
                 scorers += five
             else:
-                losers += five
+                staging_losers.append(tup[4])
 
         # Check six value from input
         if index >= 6:
@@ -199,10 +200,24 @@ class GameLogic:
             if GameLogic.calculate_score(six) > 0:
                 scorers += six
             else:
-                losers += six
+                staging_losers.append(tup[5])
 
-        print(losers)
+        # This will add number sets other than 1 and 5
+        numbers = Counter(staging_losers).most_common()
+        x = 0
+        for num in numbers:
+            if num[1] >= 3:
+                for loser in staging_losers:
+                    if num[0] == loser:
+                        scorers += loser,
+            x += 1
+
+        print(tuple(sorted(staging_losers)))
         return tuple(sorted(scorers))
+
+    @staticmethod
+    def get_losers(tup):
+        pass
 
     def play_dice(self):
         print("Welcome to Ten Thousand")
@@ -237,8 +252,7 @@ class GameLogic:
 
                     else:
                         keepers = [int(d) for d in str(choice)]
-                        # TODO: Why is line 243 - 254 being skipped????
-                        # attempting to validate cheat_and_fix.sim.txt
+
                         test = GameLogic.validate_keepers(tuple(roll), tuple(keepers))
                         print(test)
                         if test == True:
@@ -248,6 +262,7 @@ class GameLogic:
                                 print("Cheater!!! Or possibly made a typo...")
                                 print(f"*** {formatted_roll} ***")
                                 print("Enter dice to keep, or (q)uit:")
+                                # TODO: Add quit option in the while loop
                                 choice = input("> ")
                                 if test == True:
                                     break
@@ -263,12 +278,33 @@ class GameLogic:
 
                             print("(r)oll again, (b)ank your points or (q)uit:")
                             choice = input("> ")
+                            temporary_points = 0
                             if choice == "b":
-                                score_points += points
+                                score_points += (points + temporary_points)
                                 print(f"You banked {points} in round {round_num}")
                                 print(f"Total score is {score_points} points")
                                 round_num += 1
                                 break
+                            elif choice == "r":
+                                temporary_points += points
+                                roll_values = []
+                                roll = GameLogic.roll_dice(num_di)
+                                roll_length = len(roll)
+                                print(f"Rolling {roll_length} dice...")
+                                for value in roll:
+                                    roll_values.append(str(value))
+
+                                formatted_roll = " ".join(roll_values)
+                                print(f"*** {formatted_roll} ***")
+                                print("Enter dice to keep, or (q)uit:")
+                                choice = input("> ")
+                                points_potential = [int(d) for d in str(choice)]
+
+                                for point in points_potential:
+                                    num_di -= 1
+                                points = GameLogic.calculate_score(tuple(points_potential))
+                                print(f"You have {points} unbanked points and {num_di} dice remaining")
+                                continue
                             elif choice == "q":
                                 break
                             break
@@ -278,12 +314,13 @@ class GameLogic:
 
 if __name__ == "__main__":
 
-    test2 = GameLogic.roll_dice(6)
-
-    test3 = GameLogic.play_dice(test2)
-    # test4 = GameLogic.get_scorers((3,3,3,1,1))
+    # test2 = GameLogic.roll_dice(6)
+    #
+    # test3 = GameLogic.play_dice(test2)
+    # test4 = GameLogic.get_scorers((6,3,6,6,1,5))
     # print(test4)
-    # roll = (5,5,1,4,4,2)
-    # points = [int(d) for d in str(555)]
-    # test5 = GameLogic.validate_keepers(roll, tuple(points))
-    # print(test5)
+    roll = (6,3,6,6,1,5)
+    points = [int(d) for d in str(666)]
+
+    test5 = GameLogic.validate_keepers(roll, tuple(points))
+    print(test5)
