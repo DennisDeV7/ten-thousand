@@ -25,6 +25,9 @@ Ten Thousand now passes the following tests:
   - test_get_scorers.py
   - test_validate_score.py
   - cheat_and_fix.sim.txt
+  - hot_dice.sim.txt
+  - repeat_roller.sim.txt
+  - zilcher.sim.txt
 
 Example run of game_logic.py
 ```
