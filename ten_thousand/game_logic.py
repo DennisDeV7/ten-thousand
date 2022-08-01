@@ -135,9 +135,25 @@ class GameLogic:
             r_qty.append(num[1])
         for bum in keepers_count:
             k_qty.append(bum[1])
-        if set(sorted(keepers)).issubset(sorted(roll)) and sorted(k_qty) <= sorted(r_qty):
+
+        if set(sorted(keepers)).issubset(sorted(roll)) and GameLogic.confirm_quantity(roll_count, keepers_count):
             return True
-        return False
+        else:
+            return False
+
+    @staticmethod
+    def confirm_quantity(roll_count, keepers_count):
+        truth = 0
+
+        for num in keepers_count:
+            for bum in roll_count:
+                if num[0] == bum[0] and num[1] <= bum[1]:
+                    truth += 1
+
+        if truth == len(keepers_count):
+            return True
+        else:
+            return False
 
     @staticmethod
     def get_scorers(tup):
@@ -216,8 +232,23 @@ class GameLogic:
         return tuple(sorted(scorers))
 
     @staticmethod
-    def get_losers(tup):
-        pass
+    def zilch(roll):
+        if GameLogic.calculate_score(roll) == 0:
+            print("""
+**********************************
+**     Zilch!!! Round Over      **
+**********************************
+            """)
+            return False
+
+    @staticmethod
+    def validate_hot_dice(keepers, num_di):
+        hot_dice = GameLogic.get_scorers(keepers)
+        if len(hot_dice) == 6:
+            num_di = 6
+            return num_di
+        else:
+            return num_di
 
     def play_dice(self):
         print("Welcome to Ten Thousand")
@@ -242,7 +273,7 @@ class GameLogic:
 
                     formatted_roll = " ".join(roll_values)
                     print(f"*** {formatted_roll} ***")
-
+                    # GameLogic.zilch(roll)
                     print("Enter dice to keep, or (q)uit:")
                     choice = input("> ")
 
@@ -254,9 +285,10 @@ class GameLogic:
                         keepers = [int(d) for d in str(choice)]
 
                         test = GameLogic.validate_keepers(tuple(roll), tuple(keepers))
-                        print(test)
+
                         if test == True:
-                            continue
+                            pass
+
                         if test == False:
                             while test == False:
                                 print("Cheater!!! Or possibly made a typo...")
@@ -267,60 +299,76 @@ class GameLogic:
                                 if test == True:
                                     break
                                 break
-
                         points_potential = [int(d) for d in str(choice)]
 
                         for point in points_potential:
                             num_di -= 1
+                        num_di = GameLogic.validate_hot_dice(tuple(points_potential), num_di)
                         points = GameLogic.calculate_score(tuple(points_potential))
-                        print(f"You have {points} unbanked points and {num_di} dice remaining")
+                        print(f"You have {points} unbanked points and {num_di} dice remaining\n")
                         while True:
-
+                            zilcher = 0
                             print("(r)oll again, (b)ank your points or (q)uit:")
                             choice = input("> ")
-                            temporary_points = 0
+                            if choice == "q":
+                                break
+
                             if choice == "b":
-                                score_points += (points + temporary_points)
+                                score_points += points
                                 print(f"You banked {points} in round {round_num}")
-                                print(f"Total score is {score_points} points")
+                                print(f"Total score is {score_points} points\n")
                                 round_num += 1
                                 break
                             elif choice == "r":
-                                temporary_points += points
+
                                 roll_values = []
                                 roll = GameLogic.roll_dice(num_di)
                                 roll_length = len(roll)
                                 print(f"Rolling {roll_length} dice...")
                                 for value in roll:
                                     roll_values.append(str(value))
-
                                 formatted_roll = " ".join(roll_values)
                                 print(f"*** {formatted_roll} ***")
+
+                                if GameLogic.zilch(roll) == False:
+                                    zilcher += 1
+                                    break
+
                                 print("Enter dice to keep, or (q)uit:")
                                 choice = input("> ")
+                                if choice == "q":
+                                    break
                                 points_potential = [int(d) for d in str(choice)]
 
                                 for point in points_potential:
                                     num_di -= 1
-                                points = GameLogic.calculate_score(tuple(points_potential))
-                                print(f"You have {points} unbanked points and {num_di} dice remaining")
+                                r_points = GameLogic.calculate_score(tuple(points_potential))
+                                points += r_points
+                                print(f"You have {r_points} unbanked points and {num_di} dice remaining\n")
                                 continue
-                            elif choice == "q":
-                                break
-                            break
 
+                            break
+                        if zilcher == 1:
+                            print(f"You banked 0 points in round {round_num}")
+                            round_num += 1
                 break
 
 
 if __name__ == "__main__":
 
     # test2 = GameLogic.roll_dice(6)
-    #
-    # test3 = GameLogic.play_dice(test2)
+    test2 = (1,1,2,2,3,3)
+    test3 = GameLogic.play_dice(test2)
+
     # test4 = GameLogic.get_scorers((6,3,6,6,1,5))
     # print(test4)
-    roll = (6,3,6,6,1,5)
-    points = [int(d) for d in str(666)]
-
-    test5 = GameLogic.validate_keepers(roll, tuple(points))
-    print(test5)
+    # roll = (6,3,6,6,1,5)
+    # num = 6661
+    # points = [int(d) for d in str(66)]
+    #
+    #
+    #
+    # test6 = set(points).issubset(roll)
+    # print(test6)
+    # test5 = GameLogic.validate_keepers(roll, tuple(points))
+    # print(test5)
